@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - BurgerPlace Orders</title>
+<style>
+body { font-family:Arial; background:#fff7e6; margin:0; padding:20px; }
+header { background:#8B0000; color:#fff; padding:20px; text-align:center; border-radius:10px; margin-bottom:20px; }
+h1 { margin:0; }
+.search-box { text-align:center; margin-bottom:20px; }
+.search-box input { width:50%; padding:10px; font-size:1em; border:2px solid #8B0000; border-radius:20px; }
+table { width:100%; border-collapse:collapse; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 4px 8px rgba(0,0,0,0.2); }
+th,td { padding:12px; border:1px solid #ddd; text-align:center; }
+th { background:#8B0000; color:white; }
+tr:nth-child(even){ background:#fef4e8; }
+.no-orders{ text-align:center; margin-top:30px; font-size:1.2em; color:#555; }
+.btn{ margin:10px; padding:10px 20px; font-size:1em; font-weight:bold; border:none; border-radius:20px; cursor:pointer; transition:0.3s; }
+.delete-btn{ background:#ff4d4d; color:white; }
+.delete-btn:hover{ background:#cc0000; }
+.clear-btn{ background:#FFD700; color:#8B0000; }
+.clear-btn:hover{ background:#ffa500; }
+.download-btn{ background:#4CAF50; color:#fff; }
+.download-btn:hover{ background:#2e7d32; }
+.logout-btn{ background:#333; color:#fff; }
+.logout-btn:hover{ background:#555; }
+.back-btn{ background:#555; color:#fff; }
+.back-btn:hover{ background:#333; }
+</style>
+</head>
+<body>
+
+<header>
+<h1>Admin Dashboard</h1>
+<p>All Customer Orders</p>
+</header>
+
+<div class="search-box">
+<input type="text" id="searchInput" onkeyup="filterOrders()" placeholder="Search by Name or Burger...">
+</div>
+
+<div id="ordersContainer"></div>
+
+<div style="text-align:center;">
+<button class="btn clear-btn" onclick="clearOrders()">Clear All Orders</button>
+<button class="btn download-btn" onclick="downloadCSV()">Download Orders (CSV)</button>
+<button class="btn logout-btn" onclick="logout()">Logout</button>
+<a href="index.html"><button class="btn back-btn">Back to Home</button></a>
+</div>
+
+<script>
+let orders=JSON.parse(localStorage.getItem("orders"))||[];
+
+function loadOrders(filteredOrders=orders){
+  const container=document.getElementById("ordersContainer");
+  if(filteredOrders.length===0){ container.innerHTML="<p class='no-orders'>No orders found!</p>"; return; }
+  let table=`<table>
+    <tr><th>#</th><th>Name</th><th>Address</th><th>Burger</th><th>Quantity</th><th>Order Time</th><th>Action</th></tr>`;
+  filteredOrders.forEach((order,index)=>{
+    table+=`<tr>
+      <td>${index+1}</td>
+      <td>${order.name}</td>
+      <td>${order.address}</td>
+      <td>${order.burger}</td>
+      <td>${order.quantity}</td>
+      <td>${order.time}</td>
+      <td><button class="btn delete-btn" onclick="deleteOrder(${index})">Delete</button></td>
+    </tr>`;
+  });
+  table+="</table>";
+  container.innerHTML=table;
+}
+
+function deleteOrder(index){
+  if(confirm("Delete this order?")){
+    orders.splice(index,1);
+    localStorage.setItem("orders",JSON.stringify(orders));
+    loadOrders();
+  }
+}
+
+function clearOrders(){
+  if(confirm("Are you sure you want to clear all orders?")){
+    localStorage.removeItem("orders");
+    orders=[];
+    loadOrders();
+  }
+}
+
+function downloadCSV(){
+  if(orders.length===0){ alert("No orders to download!"); return; }
+  let csv="Order No,Name,Address,Burger,Quantity,Time\n";
+  orders.forEach((order,index)=>{ csv+=`${index+1},${order.name},${order.address},${order.burger},${order.quantity},${order.time}\n`; });
+  const blob=new Blob([csv],{type:"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.setAttribute("href",url);
+  a.setAttribute("download","orders.csv");
+  a.click();
+}
+
+function filterOrders(){
+  const query=document.getElementById("searchInput").value.toLowerCase();
+  const filtered=orders.filter(order=>order.name.toLowerCase().includes(query)||order.burger.toLowerCase().includes(query));
+  loadOrders(filtered);
+}
+
+function logout(){
+  alert("You have been logged out!");
+  window.location.href="admin-login.html";
+}
+
+// Load orders on page load
+loadOrders();
+</script>
+
+</body>
+</html>

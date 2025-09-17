@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login - BurgerPlace</title>
+<style>
+body { font-family:Arial; background:#fff7e6; margin:0; padding:20px; display:flex; justify-content:center; align-items:center; height:100vh; }
+.login-container { background:#fff; padding:30px 40px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.2); text-align:center; width:100%; max-width:400px; }
+h2 { color:#8B0000; margin-bottom:20px; }
+input { width:100%; padding:12px; margin:10px 0; border-radius:10px; border:1px solid #ccc; font-size:1em; }
+button { width:100%; padding:12px; margin-top:15px; font-size:1.1em; font-weight:bold; border:none; border-radius:20px; background:#8B0000; color:#fff; cursor:pointer; transition:0.3s; }
+button:hover { background:#a83232; }
+.back-home { margin-top:15px; display:inline-block; color:#333; text-decoration:none; font-weight:bold; }
+.back-home:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<div class="login-container">
+<h2>Admin Login</h2>
+<input type="password" id="adminPassword" placeholder="Enter Password">
+<button onclick="login()">Login</button>
+<a class="back-home" href="index.html">Back to Home</a>
+</div>
+
+<script>
+const ADMIN_PASSWORD="8381";
+function login(){
+  let pass=document.getElementById("adminPassword").value;
+  if(pass===ADMIN_PASSWORD){ window.location.href="admin.html"; }
+  else{ alert("❌ Incorrect Password!"); }
+}
+</script>
+
+</body>
+</html>
